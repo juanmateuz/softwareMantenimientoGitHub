@@ -64,7 +64,6 @@ namespace Sistema.Web.Controllers
             });
         }
 
-
         //metodo llenar select proveedores
         // GET: api/Personas/SelectProveedores
         //modelo me refleja la entidad solo con los datos que el usuario requiera
@@ -78,7 +77,6 @@ namespace Sistema.Web.Controllers
             {
                 idpersona = p.idpersona,//informacion a mostrar en el listado
                 nombre = p.nombre,
-
             });
         }
 
@@ -94,15 +92,11 @@ namespace Sistema.Web.Controllers
 
             //Validar email no repetido
             var email = model.email.ToLower();
-
             if (await _context.Personas.AnyAsync(p => p.email == email))//u.email obtengo el email del context
             {
                 return BadRequest("El email ya existe");
             }
-
             //llamo a metodo para crear las claves
-
-
             Persona persona = new Persona //entidad como tal Repuesto
             {
                 tipo_persona = model.tipo_persona,
@@ -123,7 +117,6 @@ namespace Sistema.Web.Controllers
             {
                 return BadRequest();
             }
-
             return Ok();
         }
 
@@ -143,12 +136,10 @@ namespace Sistema.Web.Controllers
             }
 
             var persona = await _context.Personas.FirstOrDefaultAsync(p => p.idpersona == model.idpersona);
-
             if (persona== null) //si usuario no existe
             {
                 return NotFound();
             }
-
             persona.tipo_persona = model.tipo_persona;
             persona.nombre = model.nombre;
             persona.tipo_documento = model.tipo_documento;
@@ -156,8 +147,6 @@ namespace Sistema.Web.Controllers
             persona.direccion = model.direccion;
             persona.telefono = model.telefono;
             persona.email = model.email.ToLower();
-
-
             try
             {
                 await _context.SaveChangesAsync();
@@ -167,7 +156,6 @@ namespace Sistema.Web.Controllers
                 // Guardar Excepción
                 return BadRequest();
             }
-
             return Ok();
         }
         private bool PersonaExists(int id)

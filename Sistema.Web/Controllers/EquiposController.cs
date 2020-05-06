@@ -67,7 +67,7 @@ namespace Sistema.Web.Controllers
         }
 
         // GET: api/Distribuidor/Mostrar/1
-        // [Authorize(Roles = "Mecanico, Administrador")]//autorizacion segin roles
+        // [Authorize(Roles = "Mecanico, Administrador")]//autorizacion segun roles
         [HttpGet("[action]/{id}")]
         public async Task<IActionResult> Mostrar([FromRoute] int id)//espera como parametro un id debemos enviarle la url
         {
@@ -100,7 +100,7 @@ namespace Sistema.Web.Controllers
 
 
         // PUT: api/Distribuidor/Actualizar
-       // [Authorize(Roles = " Administrador")]//autorizacion segin roles
+       // [Authorize(Roles = " Administrador")]//autorizacion segun roles
         [HttpPut("[action]")]
         public async Task<IActionResult> Actualizar([FromBody] ActualizarViewModel model)///enviamos todo el objeto ActualizarViewModel
         {

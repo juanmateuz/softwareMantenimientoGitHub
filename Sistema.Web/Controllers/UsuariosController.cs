@@ -26,17 +26,16 @@ namespace Sistema.Web.Controllers
         public UsuariosController(DbContextSistema context, IConfiguration config)
         {
             _context = context;
-            _config = config;//configuracion token
+            _config = config;//Configuracion token
         }
 
-        // GET: api/Usuarios/listar
-        //modelo me refleja la entidad solo con los datos que el usuario requiera
-      // [Authorize(Roles = "Administrador")]//autorizacion segin roles
+        // GET: api/Usuarios/Listar ----Modelo me refleja la entidad solo con los datos que el usuario requiera        
+        // [Authorize(Roles = "Administrador")]//Autorizacion segun roles
         [HttpGet("[action]")]
         public async Task<IEnumerable<UsuarioViewModel>> Listar()//nombre metodo generamos una tarea asincrona y llamamos CategoriaViewModel
         {
             var usuario = await _context.Usuarios.Include(u => u.rol).ToListAsync();//objeto llamado categoria ToListAsync:obtenemos la lista del registro _context de la coleccion categorias
-            //include porque esta relacionado con la tabla categoria
+            //Include porque esta relacionado con la tabla categoria
             return usuario.Select(u => new UsuarioViewModel //retorno el objeto siguiendo la estructura CategoriaViewModel
             {
                 idusuario = u.idusuario,
@@ -54,13 +53,13 @@ namespace Sistema.Web.Controllers
         }
 
         // POST: api/Usuarios/Crear
-        [Authorize(Roles = "Administrador")]//autorizacion segin roles
+        [Authorize(Roles = "Administrador")]//Autorizacion segun roles
         [HttpPost("[action]")]
         public async Task<IActionResult> Crear([FromBody] CrearViewModel model)
         {
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid)//permite realizar validaciones segun los data annotation
             {
-                return BadRequest(ModelState); //permite realizar validaciones segun los data annotation
+                return BadRequest(ModelState); 
             }
 
             //Validar email no repetido
@@ -74,7 +73,7 @@ namespace Sistema.Web.Controllers
             //llamo a metodo para crear las claves
             CrearPasswordHash(model.password, out byte[] passwordHash, out byte[] passwordSalt); ;
 
-            Usuario usuario = new Usuario //entidad como tal Repuesto
+            Usuario usuario = new Usuario //entidad como tal Usuarios
             {
                 idrol = model.idrol,            
                 nombre = model.nombre, //indico a mi objeto categoria que el nombre va a ser igual al del modelo
@@ -88,7 +87,7 @@ namespace Sistema.Web.Controllers
                 condicion=true
 
             };
-            _context.Usuarios.Add(usuario);// me agregue esa categoria
+            _context.Usuarios.Add(usuario);// me agregue esa Usuario
             try
             {
                 await _context.SaveChangesAsync();//guarda los cambios
@@ -101,7 +100,7 @@ namespace Sistema.Web.Controllers
             return Ok();
         }
 
-         // PUT: api/Distribuidor/Actualizar
+         // PUT: api/Usuarios/Actualizar
         [Authorize(Roles = "Administrador")]//autorizacion segin roles
         [HttpPut("[action]")]
         public async Task<IActionResult> Actualizar([FromBody] ActualizarViewModel model)
@@ -162,9 +161,8 @@ namespace Sistema.Web.Controllers
             }
         }
 
-        //metodo llenar select model
+        //metodo llenar select model ----modelo me refleja la entidad solo con los datos que el usuario requiera
         // GET: api/Usuarios/Select
-        //modelo me refleja la entidad solo con los datos que el usuario requiera
         [HttpGet("[action]")]
         public async Task<IEnumerable<SelectViewModel>> Select()//nombre metodo generamos una tarea asincrona y llamamos SelectViewModel
         {
@@ -172,14 +170,12 @@ namespace Sistema.Web.Controllers
 
             return solicitud.Select(c => new SelectViewModel //retorno el objeto siguiendo la estructura SelectViewModel
             {
-                nombre = c.nombre,//informacion a mostrar en el listado       
-
+                nombre = c.nombre,//informacion a mostrar en el listado 
             });
         }
 
         //metodo llenar select model
-        // GET: api/Usuarios/SelectMecanico
-        //modelo me refleja la entidad solo con los datos que el usuario requiera
+        // GET: api/Usuarios/SelectMecanico    
         [HttpGet("[action]")]
         public async Task<IEnumerable<SelectViewModel>> SelectMecanico()//nombre metodo generamos una tarea asincrona y llamamos SelectViewModel
         {
@@ -192,11 +188,10 @@ namespace Sistema.Web.Controllers
         }
 
         // PUT: api/Usuarios/Desactivar/1
-        [Authorize(Roles = "Administrador")]//autorizacion segin roles
+        [Authorize(Roles = "Administrador")]
         [HttpPut("[action]/{id}")]
         public async Task<IActionResult> Desactivar([FromRoute] int id)
         {
-
             if (id <= 0)
             {
                 return BadRequest();
@@ -225,7 +220,7 @@ namespace Sistema.Web.Controllers
         }
 
         // PUT: api/Usuarios/Activar/1
-      //  [Authorize(Roles = "Administrador")]//autorizacion segin roles
+        //  [Authorize(Roles = "Administrador")]//autorizacion segin roles
         [HttpPut("[action]/{id}")]
         public async Task<IActionResult> Activar([FromRoute] int id)
         {
@@ -257,14 +252,12 @@ namespace Sistema.Web.Controllers
             return Ok();
         }
 
-        //login
+        //Login
         // PUT: api/Usuarios/Login
-
         [HttpPost("[action]")]
         public async Task<IActionResult> Login(LoginViewModel model) //recibe objeto model que instancia de loginviewmodel
         {
-            var email = model.email.ToLower();//convierto a  mayuscula
-
+            var email = model.email.ToLower();//convierto a  Mayuscula
             var usuario = await _context.Usuarios.Where(u => u.condicion == true).Include(u => u.rol).FirstOrDefaultAsync(u => u.email == email);//verifica si existe el correo donde usuarios esten habilitados 
 
             if (usuario == null)
@@ -289,13 +282,10 @@ namespace Sistema.Web.Controllers
                 new Claim("nombre", usuario.nombre )
             };
 
-            return Ok(
-                    new { token = GenerarToken(claims) }//retorno token
-                );
-
+            return Ok(new { token = GenerarToken(claims) });//retorno token
         }
         //metodo verificar password
-        // espera parametro del password /passwordHashAlmacenado para ese usuario  /passwordSalt para ese usuario
+        //Espera parametro del password /passwordHashAlmacenado para ese usuario  /passwordSalt para ese usuario
         private bool VerificarPasswordHash(string password, byte[] passwordHashAlmacenado, byte[] passwordSalt)
         {
             using (var hmac = new System.Security.Cryptography.HMACSHA512(passwordSalt))// encripto el password  usando el passwordSalt

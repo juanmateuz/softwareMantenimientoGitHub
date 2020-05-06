@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Sistema.Web.Controllers
 {
-    [Authorize(Roles = "Administrador")]//autorizacion segun roles
+    [Authorize(Roles = "Administrador")]//Autorizacion segun roles
     [Route("api/[controller]")]
     [ApiController]
     public class RolesController : ControllerBase
@@ -22,11 +22,11 @@ namespace Sistema.Web.Controllers
         }
 
         // GET: api/Roles/listar
-        //modelo me refleja la entidad solo con los datos que el rol requiera
+        //modelo me refleja la entidad solo con los datos que el Usuario requiera
         [HttpGet("[action]")]
         public async Task<IEnumerable<RolViewModel>> Listar()//nombre metodo generamos una tarea asincrona y llamamos CategoriaViewModel
         {
-            var rol = await _context.Roles.ToListAsync();//objeto llamado categoria ToListAsync:obtenemos la lista del registro _context de la coleccion categorias
+            var rol = await _context.Roles.ToListAsync();//objeto llamado Roles ToListAsync:obtenemos la lista del registro _context de la coleccion Roles
 
             return rol.Select(r => new RolViewModel //retorno el objeto siguiendo la estructura CategoriaViewModel
             {
@@ -37,13 +37,12 @@ namespace Sistema.Web.Controllers
             });
         }
 
-        //metodo llenar select rol
+        //modelo me refleja la entidad solo con los datos que el rol requiera --- metodo llenar select rol
         // GET: api/Roles/Select
-        //modelo me refleja la entidad solo con los datos que el rol requiera
         [HttpGet("[action]")]
         public async Task<IEnumerable<SelectViewModel>> Select()//nombre metodo generamos una tarea asincrona y llamamos SelectViewModel
         {
-            var rol = await _context.Roles.Where(r => r.condicion == true).ToListAsync();//objeto llamado categoria ToListAsync:obtenemos la lista del registro _context de la coleccion rol
+            var rol = await _context.Roles.Where(r => r.condicion == true).ToListAsync();//objeto llamado Roles ToListAsync:obtenemos la lista del registro _context de la coleccion rol
 
             return rol.Select(r => new SelectViewModel //retorno el objeto siguiendo la estructura SelectViewModel
             {

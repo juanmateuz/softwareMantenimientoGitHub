@@ -22,14 +22,14 @@ namespace Sistema.Web.Controllers
             _context = context;
         }
         // repuestos
-        // GET: api/Repuestos/listar
+        // GET: api/Mantenimientos/Listar
         //modelo me refleja la entidad solo con los datos que el mantenimiento requiera
         [Authorize(Roles = "Administrador,Mecanico,Ingeniero")]
         [HttpGet("[action]")]
         public async Task<IEnumerable<SolicitudViewModel>> Listar()//nombre metodo generamos una tarea asincrona y llamamos CategoriaViewModel
         {
-            var solicitud = await _context.Mantenimientos.ToListAsync();//objeto llamado model ToListAsync:obtenemos la lista del registro _context de la coleccion categorias
-            Console.WriteLine($"la solicitud is {solicitud} solicitud.");
+            var solicitud = await _context.Mantenimientos.ToListAsync();//objeto llamado model ToListAsync:obtenemos la lista del registro _context de la coleccion Mantenimiento
+            Console.WriteLine($"La solicitud is {solicitud} solicitud.");
             return solicitud.Select(s => new SolicitudViewModel //retorno el objeto siguiendo la estructura CategoriaViewModel
             {
                 idsolicitud = s.idsolicitud,//informacion a mostrar en el listar
@@ -54,7 +54,7 @@ namespace Sistema.Web.Controllers
         [HttpGet("[action]")]
         public async Task<IEnumerable<SelectViewModel>> Select()//nombre metodo generamos una tarea asincrona y llamamos SelectViewModel
         {
-            var solicitud = await _context.Mantenimientos.Where(c => c.equipo == "juan").ToListAsync();//objeto llamado model ToListAsync:obtenemos la lista del registro _context de la coleccion categorias
+            var solicitud = await _context.Mantenimientos.Where(c => c.equipo == "juan").ToListAsync();//objeto llamado model ToListAsync:obtenemos la lista del registro _context de la coleccion Mantenimiento
 
             return solicitud.Select(c => new SelectViewModel //retorno el objeto siguiendo la estructura SelectViewModel
             {
@@ -267,9 +267,8 @@ namespace Sistema.Web.Controllers
                 await _context.SaveChangesAsync();//guardamos los cambios
             }
             catch (DbUpdateConcurrencyException)
-            {
-                // guardar excepcion
-                return BadRequest();
+            {                
+                return BadRequest();// guardar excepcion
             }
 
             return Ok();
@@ -279,21 +278,18 @@ namespace Sistema.Web.Controllers
         [HttpPut("[action]/{id}")]
         public async Task<IActionResult> Activar([FromRoute] int id)
         {
-
             if (id <= 0)
             {
                 return BadRequest();
             }
-
             var model = await _context.Mantenimientos.FirstOrDefaultAsync(s => s.idsolicitud == id);// _context.Repuestos.FirstOrDefaultAsync: devuelve primer registro que encuentre
 
             if (model == null)
-            {//si no encuntra nada
-                return NotFound();
+            {
+                return NotFound();//si no encuntra nada
             }
 
             model.estado = true;
-
             try
             {
                 await _context.SaveChangesAsync();//guardamos los cambios

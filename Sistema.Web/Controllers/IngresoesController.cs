@@ -74,19 +74,16 @@ namespace Sistema.Web.Controllers
                 impuesto = model.impuesto,
                 total = model.total,
                 estado = "Aceptado"
-
             };
             
             try
             {
                 _context.Ingresos.Add(ingreso);// me agregue el ingreso
-
                 await _context.SaveChangesAsync();//guarda los cambios
                 // almacenar los detalles
                 var id = ingreso.idingreso; //valor llave primaria del ingraso
                 foreach (var det in model.detalles)//recorro detalles del objeto model instancia de la clase crear viewmodel 
-                {//detalles los recibo de la vista
-                    // 
+                {//detalles los recibo de la vista                     
                     DetalleIngreso detalle = new DetalleIngreso
                     {
                         //por cada detalle agrego un objeto
@@ -106,7 +103,6 @@ namespace Sistema.Web.Controllers
 
             return Ok();
         }
-
         private bool IngresoExists(int id)
         {
             return _context.Ingresos.Any(e => e.idingreso == id);

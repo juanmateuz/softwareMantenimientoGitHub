@@ -24,9 +24,8 @@ namespace Sistema.Web.Controllers
             _context = context;
         }
 
-        // repuestos
-        // GET: api/Repuestos/listar
-        //modelo me refleja la entidad solo con los datos que el repuesto requiera
+        // Repuestos ---- //modelo me refleja la entidad solo con los datos que el repuesto requiera
+        // GET: api/Repuestoses/listar
         [Authorize(Roles = "Administrador,Ingeniero,Mecanico")]
         [HttpGet("[action]")]
         public async Task<IEnumerable<RepuestoViewModel>> Listar()//nombre metodo generamos una tarea asincrona y llamamos repuestoViewModel
@@ -35,7 +34,7 @@ namespace Sistema.Web.Controllers
 
             return repuesto.Select(c => new RepuestoViewModel //retorno el objeto siguiendo la estructura repuestoViewModel
             {
-                idrepuestos = c.idrepuestos,//informacion a mostrar en el listad
+                idrepuestos = c.idrepuestos,//informacion a mostrar en el listar
                 iddistribuidor = c.iddistribuidor,
                 idequipo = c.idequipos,
                 tipo = c.tipo,
@@ -49,8 +48,7 @@ namespace Sistema.Web.Controllers
         }
 
         //metodo llenar select repuesto
-        // GET: api/Repuestos/listar
-        //modelo me refleja la entidad solo con los datos que el repuesto requiera
+        // GET: api/Repuestoses/listar        
         [HttpGet("[action]")]
         public async Task<IEnumerable<SelectViewModel>> Select()//nombre metodo generamos una tarea asincrona y llamamos SelectViewModel
         {
@@ -63,13 +61,12 @@ namespace Sistema.Web.Controllers
             });
         }
 
-        // GET: api/Repuestos/Mostrar/1
+        // GET: api/Repuestoses/Mostrar/1
         [HttpGet("[action]/{id}")]
         public async Task<IActionResult> Mostrar([FromRoute] int id)//espera como parametro un id debemos enviarle la url
         {
 
             var repuesto = await _context.Repuestos.FindAsync(id);//FindAsync(id):busca por id 
-
             if (repuesto == null)
             {
                 return NotFound();// si registro no existe
@@ -87,7 +84,7 @@ namespace Sistema.Web.Controllers
             }); // existe registro
         }
 
-        // PUT: api/Repuestos/Actualizar
+        // PUT: api/Repuestoses/Actualizar
         [HttpPut("[action]")]
         public async Task<IActionResult> Actualizar([FromBody] ActualizarViewModel model)///enviamos todo el objeto ActualizarViewModel
         {
@@ -96,7 +93,7 @@ namespace Sistema.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (model.idrepuestos <= 0)// repuesto existe
+            if (model.idrepuestos <= 0)//Repuesto existe
             {
                 return BadRequest();
             }
@@ -104,8 +101,8 @@ namespace Sistema.Web.Controllers
             var repuesto = await _context.Repuestos.FirstOrDefaultAsync(c => c.idrepuestos == model.idrepuestos);// _context.Repuestos.FirstOrDefaultAsync: devuelve primer registro que encuentre
 
             if (repuesto == null)
-            {//si no encuntra nada
-                return NotFound();
+            {
+                return NotFound();//si no encuntra nada
             }
 
             if (repuesto.stockminimo>=repuesto.cantidad && repuesto.correoEnviado)
@@ -119,20 +116,18 @@ namespace Sistema.Web.Controllers
             repuesto.referencia = model.referencia;
             repuesto.cantidad = model.cantidad;
             repuesto.stockminimo = model.stockminimo;
-            try //captura excepcions
+            try //captura excepcion
             {
                 await _context.SaveChangesAsync();//guardamos los cambios
             }
             catch (DbUpdateConcurrencyException)
-            {
-                // guardar excepcion
-                return BadRequest();
+            {               
+                return BadRequest(); // guardar excepcion
             }
-
             return Ok();
         }
 
-        // POST: api/Repuestos/Crear
+        // POST:api/Repuestoses/Crear
         [HttpPost("[action]")]
         public async Task<IActionResult> Crear([FromBody] CrearViewModel model)
         {
@@ -150,9 +145,8 @@ namespace Sistema.Web.Controllers
                 referencia = model.referencia,
                 cantidad = model.cantidad,
                 stockminimo = model.stockminimo
-
             };
-            _context.Repuestos.Add(repuesto);// me agregue esa repuesto
+            _context.Repuestos.Add(repuesto);// me agregue ese repuesto
 
             try
             {
@@ -165,7 +159,7 @@ namespace Sistema.Web.Controllers
             return Ok();
         }
 
-        // DELETE: api/Repuestos/Eliminar/1
+        // DELETE: api/Repuestoses/Eliminar/1
         [HttpDelete("[action]/{id}")]
         public async Task<IActionResult> Eliminar([FromRoute] int id)
         {
@@ -184,7 +178,7 @@ namespace Sistema.Web.Controllers
 
             try
             {
-                await _context.SaveChangesAsync();//guarda datos
+                await _context.SaveChangesAsync();//Guarda datos
             }
             catch (Exception ex)
             {
@@ -193,9 +187,9 @@ namespace Sistema.Web.Controllers
 
             return Ok(repuesto);
         }
-        int cantidadFaltante;
-        string nombreRepuesto = "";
-        string referencia = "";
+            int cantidadFaltante;
+            string nombreRepuesto = "";
+            string referencia = "";
         //Post: api/Repuestoes/sinStock/id 
         [HttpPost("[action]/{id}")]
         public async Task<IActionResult> sinstock([FromRoute] int id) {
@@ -208,7 +202,7 @@ namespace Sistema.Web.Controllers
             var repuesto = await _context.Repuestos.FindAsync(id);
             if (repuesto.cantidad < repuesto.stockminimo && !repuesto.correoEnviado)
             {
-                Console.WriteLine("-----------------repuesto sin stock-----------------------");
+                Console.WriteLine("-----------------Repuesto sin stock-----------------------");
                 nombreRepuesto = repuesto.nombre;
                 referencia = repuesto.referencia;
                 cantidadFaltante = repuesto.stockminimo - repuesto.cantidad;
@@ -225,18 +219,14 @@ namespace Sistema.Web.Controllers
                     await _context.SaveChangesAsync();//guardamos los cambios
                 }
                 catch (DbUpdateConcurrencyException)
-                {
-                    // guardar excepcion
-                    return BadRequest();
+                {                   
+                    return BadRequest(); // guardar excepcion
                 }
 
             }else
             {
                 Console.WriteLine("Correo ya ha sido enviado");
-            }
-               
-
-            
+            }           
             return Ok(repuesto);
         }
         

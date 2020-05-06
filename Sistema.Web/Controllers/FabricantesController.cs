@@ -22,7 +22,7 @@ namespace Sistema.Web.Controllers
             _context = context;
         }
 
-        // GET: api/Distribuidor/listar
+        // GET: api/Fabricantes/Listar
         //modelo me refleja la entidad solo con los datos que el usuario requiera
         [Authorize(Roles = "Mecanico, Administrador,Ingeniero")]//autorizacion segun roles
         [HttpGet("[action]")]
@@ -42,7 +42,7 @@ namespace Sistema.Web.Controllers
             });
         }
 
-        // GET: api/Distribuidor/Mostrar/1
+        // GET: api/Fabricantes/Mostrar/1
         [Authorize(Roles = "Mecanico, Administrador,Ingeniero")]//autorizacion segin roles
         [HttpGet("[action]/{id}")]
         public async Task<IActionResult> Mostrar([FromRoute] int id)//espera como parametro un id debemos enviarle la url
@@ -82,7 +82,7 @@ namespace Sistema.Web.Controllers
                 nombre = p.nombre,
             });
         }
-        // PUT: api/Distribuidor/Actualizar
+        // PUT: api/Fabricantes/Actualizar
         [Authorize(Roles = "Mecanico, Administrador")]//autorizacion segin roles
         [HttpPut("[action]")]
         public async Task<IActionResult> Actualizar([FromBody] ActualizarViewModel model)///enviamos todo el objeto ActualizarViewModel
@@ -123,7 +123,7 @@ namespace Sistema.Web.Controllers
             return Ok();
         }
 
-        // POST: api/Distribuidor/Crear
+        // POST: api/Fbricantes/Crear
         [Authorize(Roles = "Mecanico, Administrador")]//autorizacion segin roles
         [HttpPost("[action]")]
         public async Task<IActionResult> Crear([FromBody] CrearViewModel model)

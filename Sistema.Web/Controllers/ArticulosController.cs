@@ -22,16 +22,16 @@ namespace Sistema.Web.Controllers
             _context = context;
         }
 
-        // GET: api/Distribuidor/listar
+        // GET: api/Distribuidor/Listar
         //modelo me refleja la entidad solo con los datos que el usuario requiera
         [Authorize(Roles = "Mecanico, Administrador, Ingeniero")]//autorizacion segin roles
         [HttpGet("[action]")]
         public async Task<IEnumerable<ArticuloViewModel>> Listar()//nombre metodo generamos una tarea asincrona y llamamos CategoriaViewModel
         {
-           // var distribuidor = await _context.Distribuidor.Include(a => a.categoria).ToListAsync();//objeto llamado categoria ToListAsync:obtenemos la lista del registro _context de la coleccion categorias
+           // var distribuidor = await _context.Distribuidor.Include(a => a.categoria).ToListAsync();//objeto llamado distribuidor ToListAsync:obtenemos la lista del registro _context de la coleccion categorias
             var distribuidor = await _context.Distribuidor.ToListAsync();
 
-            //include porque esta relacionado con la tabla categoria
+            //include porque esta relacionado con la tabla distribuidor
             return distribuidor.Select(a => new ArticuloViewModel //retorno el objeto siguiendo la estructura CategoriaViewModel
             {
                 iddistribuidor = a.iddistribuidor,
@@ -43,7 +43,7 @@ namespace Sistema.Web.Controllers
         }
 
         // GET: api/Distribuidor/Mostrar/1
-        [Authorize(Roles = "Mecanico, Administrador,Ingeniero")]//autorizacion segin roles
+        [Authorize(Roles = "Mecanico, Administrador,Ingeniero")]
         [HttpGet("[action]/{id}")]
         public async Task<IActionResult> Mostrar([FromRoute] int id)//espera como parametro un id debemos enviarle la url
         {
@@ -72,7 +72,7 @@ namespace Sistema.Web.Controllers
         [HttpGet("[action]")]
         public async Task<IEnumerable<ArticuloViewModel>> SelectProveedores()//nombre metodo generamos una tarea asincrona y llamamos SelectViewModel
         {
-            var fa = await _context.Distribuidor.ToListAsync();//objeto llamado categoria ToListAsync:obtenemos la lista del registro _context de la coleccion categorias
+            var fa = await _context.Distribuidor.ToListAsync();//objeto llamado Distribuidor ToListAsync:obtenemos la lista del registro _context de la coleccion categorias
 
             return fa.Select(p => new ArticuloViewModel //retorno el objeto siguiendo la estructura SelectViewModel
             {
@@ -82,7 +82,7 @@ namespace Sistema.Web.Controllers
         }
 
         // PUT: api/Distribuidor/Actualizar
-        [Authorize(Roles = "Almacenero, Administrador,Ingeniero")]//autorizacion segin roles
+        [Authorize(Roles = "Almacenero, Administrador,Ingeniero")]//autorizacion segun roles
         [HttpPut("[action]")]
         public async Task<IActionResult> Actualizar([FromBody] ActualizarViewModel model)///enviamos todo el objeto ActualizarViewModel
         {
@@ -96,7 +96,7 @@ namespace Sistema.Web.Controllers
                 return BadRequest();
             }
 
-            var distribuidor = await _context.Distribuidor.FirstOrDefaultAsync(a => a.iddistribuidor == model.iddistribuidor);// _context.Repuestos.FirstOrDefaultAsync: devuelve primer registro que encuentre
+            var distribuidor = await _context.Distribuidor.FirstOrDefaultAsync(a => a.iddistribuidor == model.iddistribuidor);// _context.Distribuidor.FirstOrDefaultAsync: devuelve primer registro que encuentre
 
             if (distribuidor == null)
             {//si no encuntra nada
@@ -104,7 +104,7 @@ namespace Sistema.Web.Controllers
             }
             distribuidor.iddistribuidor = model.iddistribuidor;
             distribuidor.nombre = model.nombre;
-            distribuidor.ciudad = model.ciudad; //indico a mi objeto categoria que el nombre va a ser igual al del modelo
+            distribuidor.ciudad = model.ciudad; //indico a mi objeto Distribuidor que el nombre va a ser igual al del modelo
             distribuidor.telefono = model.telefono;     
 
             try //captura excepcions
@@ -121,7 +121,7 @@ namespace Sistema.Web.Controllers
         }
 
         // POST: api/Distribuidor/Crear
-        [Authorize(Roles = "Almacenero, Administrador,Ingeniero")]//autorizacion segin roles
+        [Authorize(Roles = "Almacenero, Administrador,Ingeniero")]//autorizacion segun roles
         [HttpPost("[action]")]
         public async Task<IActionResult> Crear([FromBody] CrearViewModel model)
         {
@@ -138,7 +138,7 @@ namespace Sistema.Web.Controllers
                 telefono = model.telefono             
 
             };
-            _context.Distribuidor.Add(distribuidor);// me agregue esa categoria
+            _context.Distribuidor.Add(distribuidor);// me agregue esa Distribuidor
 
             try
             {
