@@ -63,7 +63,7 @@ namespace Sistema.Web.Controllers
             }
 
             //Validar email no repetido
-            var email = model.email.ToLower();
+            var email = model.email.ToLower(); //convierto a mayuscula
 
             if (await _context.Usuarios.AnyAsync(u => u.email == email))//u.email obtengo el email del context
             {
@@ -130,7 +130,7 @@ namespace Sistema.Web.Controllers
             usuario.telefono = model.telefono;
             usuario.email = model.email.ToLower();
 
-            if (model.act_password == true)  //act_password es true actualizo el password
+            if (model.act_password == true)  //Si act_password es true actualizo el password
             {
                 CrearPasswordHash(model.password, out byte[] passwordHash, out byte[] passwordSalt);
                 usuario.password_hash = passwordHash;

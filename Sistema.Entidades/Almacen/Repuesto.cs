@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;//validar campos y longitud
 
 namespace Sistema.Entidades.Almacen // clase categoria pertenece proyecto entidades
 {                                   //a la solucion sistema y esta en  la carpeta almacen
-    public class Repuesto
+    public class Repuesto //*
     {
         //colocamos campos de la bd cambio por repuestos     
         public int idrepuestos { get; set; }
@@ -19,10 +19,10 @@ namespace Sistema.Entidades.Almacen // clase categoria pertenece proyecto entida
         public string referencia { get; set; }
         public int cantidad { get; set; }
         public int stockminimo { get; set; }
-        public Distribuidor distribuidor { get; set; }//para llave foranea
+        public Distribuidor distribuidor { get; set; }//Un distribuidor tiene muchos repuestos "llave foranea" OK
         public Equipos equipo { get; set; }
         public bool correoEnviado { get; set;}
-        //  public bool estado { get; set; } 
-        // public ICollection<Distribuidor> articulos { get;set; }
+        // public bool estado { get; set; } 
+        // public ICollection<Distribuidor> articulos { get;set; } ejemplo de uno a muchos
     }
 }

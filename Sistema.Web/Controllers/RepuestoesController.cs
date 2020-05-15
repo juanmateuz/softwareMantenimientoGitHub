@@ -25,30 +25,30 @@ namespace Sistema.Web.Controllers
         }
 
         // Repuestos ---- //modelo me refleja la entidad solo con los datos que el repuesto requiera
-        // GET: api/Repuestoses/listar
+        // GET: api/Repuestoes/listar
         [Authorize(Roles = "Administrador,Ingeniero,Mecanico")]
         [HttpGet("[action]")]
         public async Task<IEnumerable<RepuestoViewModel>> Listar()//nombre metodo generamos una tarea asincrona y llamamos repuestoViewModel
         {
             var repuesto = await _context.Repuestos.Include(d => d.distribuidor).Include(e => e.equipo).ToListAsync();//objeto llamado repuesto ToListAsync:obtenemos la lista del registro _context de la coleccion repuestos
 
-            return repuesto.Select(c => new RepuestoViewModel //retorno el objeto siguiendo la estructura repuestoViewModel
+            return repuesto.Select(r => new RepuestoViewModel //retorno el objeto siguiendo la estructura repuestoViewModel
             {
-                idrepuestos = c.idrepuestos,//informacion a mostrar en el listar
-                iddistribuidor = c.iddistribuidor,
-                idequipo = c.idequipos,
-                tipo = c.tipo,
-                nombre = c.nombre,
-                nombreDistribuidor = c.distribuidor.nombre,
-                nombreEquipo = c.equipo.nombre,
-                referencia = c.referencia,
-                cantidad = c.cantidad,
-                stockminimo = c.stockminimo
+                idrepuestos = r.idrepuestos,//informacion a mostrar en el listar
+                iddistribuidor = r.iddistribuidor,
+                idequipo = r.idequipos,
+                tipo = r.tipo,
+                nombre = r.nombre,
+                nombreDistribuidor = r.distribuidor.nombre,
+                nombreEquipo = r.equipo.nombre,
+                referencia = r.referencia,
+                cantidad = r.cantidad,
+                stockminimo = r.stockminimo
             });
         }
 
         //metodo llenar select repuesto
-        // GET: api/Repuestoses/listar        
+        // GET: api/Repuestoes/Select        
         [HttpGet("[action]")]
         public async Task<IEnumerable<SelectViewModel>> Select()//nombre metodo generamos una tarea asincrona y llamamos SelectViewModel
         {
@@ -61,19 +61,19 @@ namespace Sistema.Web.Controllers
             });
         }
 
-        // GET: api/Repuestoses/Mostrar/1
+        // GET: api/Repuestoes/Mostrar/1
         [HttpGet("[action]/{id}")]
         public async Task<IActionResult> Mostrar([FromRoute] int id)//espera como parametro un id debemos enviarle la url
         {
 
-            var repuesto = await _context.Repuestos.FindAsync(id);//FindAsync(id):busca por id 
+            var repuesto = await _context.Repuestos.Include(d => d.distribuidor).
+                SingleOrDefaultAsync(d=> d.idrepuestos==id);//busca por id 
             if (repuesto == null)
             {
                 return NotFound();// si registro no existe
             }
 
-            return Ok(new RepuestoViewModel
-            {
+            return Ok(new RepuestoViewModel            {
                 //propiedades objeto repuesto view model
                 idrepuestos = repuesto.idrepuestos,//informacion a mostrar en el listado
                 tipo = repuesto.tipo,
@@ -81,10 +81,10 @@ namespace Sistema.Web.Controllers
                 referencia = repuesto.referencia,
                 cantidad = repuesto.cantidad,
                 stockminimo = repuesto.stockminimo
-            }); // existe registro
+            }); //Existe registro
         }
 
-        // PUT: api/Repuestoses/Actualizar
+        // PUT: api/Repuestoes/Actualizar
         [HttpPut("[action]")]
         public async Task<IActionResult> Actualizar([FromBody] ActualizarViewModel model)///enviamos todo el objeto ActualizarViewModel
         {
@@ -127,7 +127,7 @@ namespace Sistema.Web.Controllers
             return Ok();
         }
 
-        // POST:api/Repuestoses/Crear
+        // POST:api/Repuestoes/Crear
         [HttpPost("[action]")]
         public async Task<IActionResult> Crear([FromBody] CrearViewModel model)
         {
@@ -159,7 +159,7 @@ namespace Sistema.Web.Controllers
             return Ok();
         }
 
-        // DELETE: api/Repuestoses/Eliminar/1
+        // DELETE: api/Repuestoes/Eliminar/1
         [HttpDelete("[action]/{id}")]
         public async Task<IActionResult> Eliminar([FromRoute] int id)
         {
