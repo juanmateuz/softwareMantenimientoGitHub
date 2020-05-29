@@ -17,11 +17,4 @@ namespace Sistema.Entidades.Almacen
      //public Repuesto categoria { get; set; } //estoy haciendo estado a la clase categoria  
     }
 }
-/* 
-  public decimal precio_venta { get; set; }
-  [Required]
-  public int stock { get; set; }
-  public string descripcion { get; set; }
-  public bool condicion { get; set; }
-  public Repuesto categoria { get; set; } //estoy haciendo estado a la clase categoria
-   */
+

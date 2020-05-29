@@ -6,10 +6,8 @@ namespace Sistema.Web.Controllers.Models.Almacen.Repuesto
     {
         //lo que quiero que el usuario vea
         public int idrepuestos { get; set; }
-        public int iddistribuidor { get; set; }
-        public int idequipo { get; set; }
-        public string nombreDistribuidor { get; set; }
-        public string nombreEquipo { get; set; }
+        public int iddistribuidor { get; set; }        
+        public string nombreDistribuidor { get; set; }        
         public string repuesto { get; set; }
         public string tipo { get; set; }      
         public string nombre { get; set; }

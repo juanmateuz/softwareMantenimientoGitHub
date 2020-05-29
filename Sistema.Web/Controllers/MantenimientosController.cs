@@ -15,11 +15,11 @@ namespace Sistema.Web.Controllers
     [ApiController]
     public class MantenimientosController : ControllerBase
     {
-        private readonly DbContextSistema _context;
+        private readonly DbContextSistema baseDatos;
 
         public MantenimientosController(DbContextSistema context)
         {
-            _context = context;
+            baseDatos = context;
         }
         // repuestos
         // GET: api/Mantenimientos/Listar
@@ -28,7 +28,7 @@ namespace Sistema.Web.Controllers
         [HttpGet("[action]")]
         public async Task<IEnumerable<SolicitudViewModel>> Listar()//nombre metodo generamos una tarea asincrona y llamamos CategoriaViewModel
         {
-            var solicitud = await _context.Mantenimientos.ToListAsync();//objeto llamado model ToListAsync:obtenemos la lista del registro _context de la coleccion Mantenimiento
+            var solicitud = await baseDatos.Mantenimientos.ToListAsync();//objeto llamado model ToListAsync:obtenemos la lista del registro baseDatos de la coleccion Mantenimiento
             Console.WriteLine($"La solicitud is {solicitud} solicitud.");
             return solicitud.Select(s => new SolicitudViewModel //retorno el objeto siguiendo la estructura CategoriaViewModel
             {
@@ -54,7 +54,7 @@ namespace Sistema.Web.Controllers
         [HttpGet("[action]")]
         public async Task<IEnumerable<SelectViewModel>> Select()//nombre metodo generamos una tarea asincrona y llamamos SelectViewModel
         {
-            var solicitud = await _context.Mantenimientos.Where(c => c.equipo == "juan").ToListAsync();//objeto llamado model ToListAsync:obtenemos la lista del registro _context de la coleccion Mantenimiento
+            var solicitud = await baseDatos.Mantenimientos.Where(c => c.equipo == "juan").ToListAsync();//objeto llamado model ToListAsync:obtenemos la lista del registro baseDatos de la coleccion Mantenimiento
 
             return solicitud.Select(c => new SelectViewModel //retorno el objeto siguiendo la estructura SelectViewModel
             {
@@ -84,7 +84,7 @@ namespace Sistema.Web.Controllers
             if (rol2 == "Mecanico")
             {
                 //FirstOrDefaultAsync(s => s.idsolicitud == id)
-                var solicitud = await _context.Mantenimientos.Where(i => i.ejecuta == id2)
+                var solicitud = await baseDatos.Mantenimientos.Where(i => i.ejecuta == id2)
                                               .ToListAsync();//FindAsync(id):busca por id 
                 return solicitud.Select(i => new SolicitudViewModel
                 {//propiedades objeto model view model
@@ -106,11 +106,11 @@ namespace Sistema.Web.Controllers
             }else
             {
                 //FirstOrDefaultAsync(s => s.idsolicitud == id)
-                var solicitud = await _context.Mantenimientos.Where(i => i.recibido_por == id2 || i.solicitado_por == id2)
+                var solicitud = await baseDatos.Mantenimientos.Where(i => i.recibido_por == id2 || i.solicitado_por == id2)
                       .ToListAsync();//FindAsync(id):busca por id 
-                var solicitu = _context.Mantenimientos.Where(i => i.recibido_por == id2 && i.estado2 == "Creado").Count();
+                var MantenimientosPendiente = baseDatos.Mantenimientos.Where(i => i.recibido_por == id2 && i.estado2 == "Creado").Count();
                 Console.WriteLine("--------------------------------------------------------------------");
-                Console.WriteLine($"conteo {solicitu} filas.");
+                Console.WriteLine($"conteo {MantenimientosPendiente} filas.");
                 return solicitud.Select(i => new SolicitudViewModel
                 {//propiedades objeto model view model
                     idsolicitud = i.idsolicitud,//informacion a mostrar en el listad
@@ -126,7 +126,7 @@ namespace Sistema.Web.Controllers
                     descripcion_mecanico = i.descripcion_mecanico,
                     estado2 = i.estado2,
                     estado = i.estado,
-                    conteo = solicitu,
+                    conteo = MantenimientosPendiente,
                     ejecuta = i.ejecuta
 
                 }); // existe registro
@@ -147,7 +147,7 @@ namespace Sistema.Web.Controllers
                 return base.BadRequest();
             }
 
-            var solicitud = await _context.Mantenimientos.FirstOrDefaultAsync(c => c.idsolicitud == model.idsolicitud);// _context.Repuestos.FirstOrDefaultAsync: devuelve primer registro que encuentre
+            var solicitud = await baseDatos.Mantenimientos.FirstOrDefaultAsync(c => c.idsolicitud == model.idsolicitud);// baseDatos.Repuestos.FirstOrDefaultAsync: devuelve primer registro que encuentre
 
             if (solicitud == null)
             {//si no encuntra nada
@@ -170,7 +170,7 @@ namespace Sistema.Web.Controllers
 
             try //captura excepcions
             {
-                await _context.SaveChangesAsync();//guardamos los cambios
+                await baseDatos.SaveChangesAsync();//guardamos los cambios
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -205,11 +205,11 @@ namespace Sistema.Web.Controllers
                 estado2 = model.estado2,
                 estado = model.estado
             };
-            _context.Mantenimientos.Add(mantenimiento);// me agregue esa model
+            baseDatos.Mantenimientos.Add(mantenimiento);// me agregue esa model
 
             try
             {
-                await _context.SaveChangesAsync();//guarda los cambios
+                await baseDatos.SaveChangesAsync();//guarda los cambios
             }
             catch (Exception ex)
             {
@@ -227,15 +227,15 @@ namespace Sistema.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var solicitud = await _context.Mantenimientos.FindAsync(id);
+            var solicitud = await baseDatos.Mantenimientos.FindAsync(id);
             if (solicitud == null)
             {
                 return NotFound();
             }
-            _context.Mantenimientos.Remove(solicitud);
+            baseDatos.Mantenimientos.Remove(solicitud);
             try
             {
-                await _context.SaveChangesAsync();//guarda datos
+                await baseDatos.SaveChangesAsync();//guarda datos
             }
             catch (Exception ex)
             {
@@ -253,7 +253,7 @@ namespace Sistema.Web.Controllers
                 return BadRequest();
             }
 
-            var model = await _context.Mantenimientos.FirstOrDefaultAsync(s => s.idsolicitud == id);// _context.Repuestos.FirstOrDefaultAsync: devuelve primer registro que encuentre
+            var model = await baseDatos.Mantenimientos.FirstOrDefaultAsync(s => s.idsolicitud == id);// baseDatos.Repuestos.FirstOrDefaultAsync: devuelve primer registro que encuentre
 
             if (model == null)
             {//si no encuntra nada
@@ -264,7 +264,7 @@ namespace Sistema.Web.Controllers
 
             try
             {
-                await _context.SaveChangesAsync();//guardamos los cambios
+                await baseDatos.SaveChangesAsync();//guardamos los cambios
             }
             catch (DbUpdateConcurrencyException)
             {                
@@ -282,7 +282,7 @@ namespace Sistema.Web.Controllers
             {
                 return BadRequest();
             }
-            var model = await _context.Mantenimientos.FirstOrDefaultAsync(s => s.idsolicitud == id);// _context.Repuestos.FirstOrDefaultAsync: devuelve primer registro que encuentre
+            var model = await baseDatos.Mantenimientos.FirstOrDefaultAsync(s => s.idsolicitud == id);// baseDatos.Repuestos.FirstOrDefaultAsync: devuelve primer registro que encuentre
 
             if (model == null)
             {
@@ -292,7 +292,7 @@ namespace Sistema.Web.Controllers
             model.estado = true;
             try
             {
-                await _context.SaveChangesAsync();//guardamos los cambios
+                await baseDatos.SaveChangesAsync();//guardamos los cambios
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -304,7 +304,7 @@ namespace Sistema.Web.Controllers
         }
         private bool MantenimientoExists(int id)
         {
-            return _context.Mantenimientos.Any(e => e.idsolicitud == id);
+            return baseDatos.Mantenimientos.Any(e => e.idsolicitud == id);
         }
     }
 }

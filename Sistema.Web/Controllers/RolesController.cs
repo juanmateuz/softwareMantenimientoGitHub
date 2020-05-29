@@ -14,11 +14,11 @@ namespace Sistema.Web.Controllers
     [ApiController]
     public class RolesController : ControllerBase
     {
-        private readonly DbContextSistema _context;
+        private readonly DbContextSistema baseDatos;
 
         public RolesController(DbContextSistema context)
         {
-            _context = context;
+            baseDatos = context;
         }
 
         // GET: api/Roles/listar
@@ -26,7 +26,7 @@ namespace Sistema.Web.Controllers
         [HttpGet("[action]")]
         public async Task<IEnumerable<RolViewModel>> Listar()//nombre metodo generamos una tarea asincrona y llamamos CategoriaViewModel
         {
-            var rol = await _context.Roles.ToListAsync();//objeto llamado Roles ToListAsync:obtenemos la lista del registro _context de la coleccion Roles
+            var rol = await baseDatos.Roles.ToListAsync();//objeto llamado Roles ToListAsync:obtenemos la lista del registro baseDatos de la coleccion Roles
 
             return rol.Select(r => new RolViewModel //retorno el objeto siguiendo la estructura CategoriaViewModel
             {
@@ -42,7 +42,7 @@ namespace Sistema.Web.Controllers
         [HttpGet("[action]")]
         public async Task<IEnumerable<SelectViewModel>> Select()//nombre metodo generamos una tarea asincrona y llamamos SelectViewModel
         {
-            var rol = await _context.Roles.Where(r => r.condicion == true).ToListAsync();//objeto llamado Roles ToListAsync:obtenemos la lista del registro _context de la coleccion rol
+            var rol = await baseDatos.Roles.Where(r => r.condicion == true).ToListAsync();//objeto llamado Roles ToListAsync:obtenemos la lista del registro baseDatos de la coleccion rol
 
             return rol.Select(r => new SelectViewModel //retorno el objeto siguiendo la estructura SelectViewModel
             {
@@ -53,7 +53,7 @@ namespace Sistema.Web.Controllers
         }
         private bool RolExists(int id)
         {
-            return _context.Roles.Any(e => e.idrol == id);
+            return baseDatos.Roles.Any(e => e.idrol == id);
         }
     }
 }

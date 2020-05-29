@@ -4,8 +4,7 @@ namespace Sistema.Web.Controllers.Models.Almacen.Repuesto
 {
     public class CrearViewModel
     {
-        public int iddistribuidor { get; set; }
-        public int idequipos { get; set; }
+        public int iddistribuidor { get; set; }        
         public string tipo { get; set; }
         [Required]
         //[StringLength(50, MinimumLength = 3, ErrorMessage = "El nombre no debe de tener mas de 50 caracteres")]

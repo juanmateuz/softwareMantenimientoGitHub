@@ -1,11 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Sistema.Datos.Mapping.Ventas;
-using Sistema.Entidades.Ventas;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
+using Sistema.Entidades.Almacen;
 
 namespace Sistema.Datos.Mapping.Almacen
 {

@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Sistema.Datos;
-using Sistema.Entidades.Ventas;
+using Sistema.Entidades.Almacen;
 using Sistema.Web.Controllers.Models.Ventas.Fabricante;
 using System;
 using System.Collections.Generic;
@@ -15,11 +15,11 @@ namespace Sistema.Web.Controllers
     [ApiController]
     public class FabricantesController : ControllerBase
     {
-        private readonly DbContextSistema _context;
+        private readonly DbContextSistema baseDatos;
 
         public FabricantesController(DbContextSistema context)
         {
-            _context = context;
+            baseDatos = context;
         }
 
         // GET: api/Fabricantes/Listar
@@ -28,8 +28,8 @@ namespace Sistema.Web.Controllers
         [HttpGet("[action]")]
         public async Task<IEnumerable<FabricanteViewModel>> Listar()//nombre metodo generamos una tarea asincrona y llamamos CategoriaViewModel
         {
-            // var articulo = await _context.Distribuidor.Include(a => a.categoria).ToListAsync();//objeto llamado categoria ToListAsync:obtenemos la lista del registro _context de la coleccion categorias
-            var fabricante = await _context.Fabricantes.ToListAsync();
+            // var articulo = await baseDatos.Distribuidor.Include(a => a.categoria).ToListAsync();//objeto llamado categoria ToListAsync:obtenemos la lista del registro baseDatos de la coleccion categorias
+            var fabricante = await baseDatos.Fabricantes.ToListAsync();
 
             //include porque esta relacionado con la tabla categoria
             return fabricante.Select(f => new FabricanteViewModel //retorno el objeto siguiendo la estructura CategoriaViewModel
@@ -47,9 +47,9 @@ namespace Sistema.Web.Controllers
         [HttpGet("[action]/{id}")]
         public async Task<IActionResult> Mostrar([FromRoute] int id)//espera como parametro un id debemos enviarle la url
         {
-            var fabricante = await _context.Fabricantes.FindAsync(id);//FindAsync(id):busca por id 
+            var fabricante = await baseDatos.Fabricantes.FindAsync(id);//FindAsync(id):busca por id 
 
-            //var articulo = await _context.Distribuidor.Include(a=> a.categoria).
+            //var articulo = await baseDatos.Distribuidor.Include(a=> a.categoria).
             //    SingleOrDefaultAsync(a=>a.idarticulo==id);//FindAsync(id):busca por id 
 
             if (fabricante == null)
@@ -74,7 +74,7 @@ namespace Sistema.Web.Controllers
         [HttpGet("[action]")]
         public async Task<IEnumerable<FabricanteViewModel>> SelectProveedores()//nombre metodo generamos una tarea asincrona y llamamos SelectViewModel
         {
-            var fa = await _context.Fabricantes.ToListAsync();//objeto llamado categoria ToListAsync:obtenemos la lista del registro _context de la coleccion categorias
+            var fa = await baseDatos.Fabricantes.ToListAsync();//objeto llamado categoria ToListAsync:obtenemos la lista del registro baseDatos de la coleccion categorias
 
             return fa.Select(p => new FabricanteViewModel //retorno el objeto siguiendo la estructura SelectViewModel
             {
@@ -97,8 +97,8 @@ namespace Sistema.Web.Controllers
                 return BadRequest();
             }
 
-            var fabricante = await _context.Fabricantes.FirstOrDefaultAsync(f => f.idfabricante == model.idfabricante);
-            // _context.Repuestos.FirstOrDefaultAsync: devuelve primer registro que encuentre
+            var fabricante = await baseDatos.Fabricantes.FirstOrDefaultAsync(f => f.idfabricante == model.idfabricante);
+            // baseDatos.Repuestos.FirstOrDefaultAsync: devuelve primer registro que encuentre
 
             if (fabricante == null)
             {//si no encuntra nada
@@ -113,7 +113,7 @@ namespace Sistema.Web.Controllers
 
             try //captura excepcions
             {
-                await _context.SaveChangesAsync();//guardamos los cambios
+                await baseDatos.SaveChangesAsync();//guardamos los cambios
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -141,11 +141,11 @@ namespace Sistema.Web.Controllers
                 telefono = model.telefono,
                 email=model.email
             };
-            _context.Fabricantes.Add(fabricantes);// me agregue esa categoria
+            baseDatos.Fabricantes.Add(fabricantes);// me agregue esa categoria
 
             try
             {
-                await _context.SaveChangesAsync();//guarda los cambios
+                await baseDatos.SaveChangesAsync();//guarda los cambios
             }
             catch (Exception ex)
             {
@@ -155,7 +155,7 @@ namespace Sistema.Web.Controllers
         }
         private bool FabricanteExists(int id)
         {
-            return _context.Fabricantes.Any(e => e.idfabricante == id);
+            return baseDatos.Fabricantes.Any(e => e.idfabricante == id);
         }
     }
 }

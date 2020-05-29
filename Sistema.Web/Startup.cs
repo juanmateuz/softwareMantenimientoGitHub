@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;//validar token
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;//Validar token
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using Sistema.Datos; //se crea cuando agregamos estado a conexion sistema bd
+using Sistema.Datos; //Se crea cuando agregamos estado a conexion sistema bd
 using System.Text;
 
 namespace Sistema.Web
@@ -24,7 +24,7 @@ namespace Sistema.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            services.AddDbContext<DbContextSistema>(options =>// conexion a cadena de bs
+            services.AddDbContext<DbContextSistema>(options =>// conexion a cadena de bd
                 options.UseSqlServer(Configuration.GetConnectionString("Conexion")));//string de conexion ruta a bd
             // politicas de servicios
             services.AddCors(options => {
@@ -46,7 +46,6 @@ namespace Sistema.Web
                       IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
                   };
               });
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -60,7 +59,7 @@ namespace Sistema.Web
             {
                 app.UseHsts();
             }
-            app.UseCors("Todos");//autorizo la configuracion  
+            app.UseCors("Todos");//Autorizo la configuracion  
             app.UseAuthentication();
             app.UseHttpsRedirection();
             app.UseMvc();

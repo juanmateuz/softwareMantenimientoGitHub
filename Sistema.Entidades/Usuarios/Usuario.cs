@@ -25,6 +25,6 @@ namespace Sistema.Entidades.Usuarios
         public bool condicion { get; set; }
         public Rol rol { get; set; }  //llave foranea
         //mostramos la lista de los ingresos
-        public ICollection<Ingreso> ingresos { get; set; }//un usuario puede hacer muchos ingresos
+        
     }
 }

@@ -15,11 +15,11 @@ namespace Sistema.Web.Controllers
     [ApiController]
     public class EquiposController : ControllerBase
     {
-        private readonly DbContextSistema _context;
+        private readonly DbContextSistema baseDatos;
 
         public EquiposController(DbContextSistema context)
         {
-            _context = context;
+            baseDatos = context;
         }
 
         // GET: api/Distribuidor/listar
@@ -28,8 +28,8 @@ namespace Sistema.Web.Controllers
         [HttpGet("[action]")]
         public async Task<IEnumerable<EquipoViewModel>> Listar()//nombre metodo generamos una tarea asincrona y llamamos CategoriaViewModel
         {
-            // var articulo = await _context.Distribuidor.Include(a => a.categoria).ToListAsync();//objeto llamado categoria ToListAsync:obtenemos la lista del registro _context de la coleccion categorias
-            var equipos = await _context.equipo.ToListAsync();
+            // var articulo = await baseDatos.Distribuidor.Include(a => a.categoria).ToListAsync();//objeto llamado categoria ToListAsync:obtenemos la lista del registro baseDatos de la coleccion categorias
+            var equipos = await baseDatos.equipo.ToListAsync();
 
             //include porque esta relacionado con la tabla categoria
             return equipos.Select(a => new EquipoViewModel //retorno el objeto siguiendo la estructura CategoriaViewModel
@@ -56,7 +56,7 @@ namespace Sistema.Web.Controllers
         [HttpGet("[action]")]
         public async Task<IEnumerable<SelectViewModel>> SelectEquipos()//nombre metodo generamos una tarea asincrona y llamamos SelectViewModel
         {
-            var fa = await _context.equipo.ToListAsync();//objeto llamado categoria ToListAsync:obtenemos la lista del registro _context de la coleccion categorias
+            var fa = await baseDatos.equipo.ToListAsync();//objeto llamado categoria ToListAsync:obtenemos la lista del registro baseDatos de la coleccion categorias
 
             return fa.Select(p => new SelectViewModel //retorno el objeto siguiendo la estructura SelectViewModel
             {
@@ -71,9 +71,9 @@ namespace Sistema.Web.Controllers
         [HttpGet("[action]/{id}")]
         public async Task<IActionResult> Mostrar([FromRoute] int id)//espera como parametro un id debemos enviarle la url
         {
-            var equipo = await _context.equipo.FindAsync(id);//FindAsync(id):busca por id 
+            var equipo = await baseDatos.equipo.FindAsync(id);//FindAsync(id):busca por id 
 
-            //var articulo = await _context.Distribuidor.Include(a=> a.categoria).
+            //var articulo = await baseDatos.Distribuidor.Include(a=> a.categoria).
             //    SingleOrDefaultAsync(a=>a.idarticulo==id);//FindAsync(id):busca por id 
 
             if (equipo == null)
@@ -114,7 +114,7 @@ namespace Sistema.Web.Controllers
                 return BadRequest();
             }
 
-            var equipo = await _context.equipo.FirstOrDefaultAsync(a => a.idequipos == model.idequipos);// _context.Repuestos.FirstOrDefaultAsync: devuelve primer registro que encuentre
+            var equipo = await baseDatos.equipo.FirstOrDefaultAsync(a => a.idequipos == model.idequipos);// baseDatos.Repuestos.FirstOrDefaultAsync: devuelve primer registro que encuentre
 
             if (equipo == null)
             {//si no encuntra nada
@@ -135,7 +135,7 @@ namespace Sistema.Web.Controllers
 
             try //captura excepcions
             {
-                await _context.SaveChangesAsync();//guardamos los cambios
+                await baseDatos.SaveChangesAsync();//guardamos los cambios
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -171,11 +171,11 @@ namespace Sistema.Web.Controllers
                 estado=model.estado             
 
             };
-            _context.equipo.Add(equipo);// me agregue esa categoria
+            baseDatos.equipo.Add(equipo);// me agregue esa categoria
 
             try
             {
-                await _context.SaveChangesAsync();//guarda los cambios
+                await baseDatos.SaveChangesAsync();//guarda los cambios
             }
             catch (Exception ex)
             {
@@ -194,7 +194,7 @@ namespace Sistema.Web.Controllers
               return BadRequest();
           }
 
-          var repuesto = await _context.equipo.FirstOrDefaultAsync(c => c.idequipos == id);// _context.Repuestos.FirstOrDefaultAsync: devuelve primer registro que encuentre
+          var repuesto = await baseDatos.equipo.FirstOrDefaultAsync(c => c.idequipos == id);// baseDatos.Repuestos.FirstOrDefaultAsync: devuelve primer registro que encuentre
 
           if (repuesto == null)
           {//si no encuntra nada
@@ -203,7 +203,7 @@ namespace Sistema.Web.Controllers
           repuesto.estado = false;
           try
           {
-              await _context.SaveChangesAsync();//guardamos los cambios
+              await baseDatos.SaveChangesAsync();//guardamos los cambios
           }
           catch (DbUpdateConcurrencyException)
           {
@@ -224,7 +224,7 @@ namespace Sistema.Web.Controllers
               return BadRequest();
           }
 
-          var repuesto = await _context.equipo.FirstOrDefaultAsync(c => c.idequipos == id);// _context.Repuestos.FirstOrDefaultAsync: devuelve primer registro que encuentre
+          var repuesto = await baseDatos.equipo.FirstOrDefaultAsync(c => c.idequipos == id);// baseDatos.Repuestos.FirstOrDefaultAsync: devuelve primer registro que encuentre
 
           if (repuesto == null)
           {//si no encuntra nada
@@ -235,7 +235,7 @@ namespace Sistema.Web.Controllers
 
           try
           {
-              await _context.SaveChangesAsync();//guardamos los cambios
+              await baseDatos.SaveChangesAsync();//guardamos los cambios
           }
           catch (DbUpdateConcurrencyException)
           {
@@ -248,7 +248,7 @@ namespace Sistema.Web.Controllers
 
         private bool EquiposExists(int id)
         {
-            return _context.equipo.Any(e => e.idequipos == id);
+            return baseDatos.equipo.Any(e => e.idequipos == id);
         }
     }
 }

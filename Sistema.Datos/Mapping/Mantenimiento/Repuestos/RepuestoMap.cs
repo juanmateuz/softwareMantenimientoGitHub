@@ -8,7 +8,6 @@ namespace Sistema.Datos.Mapping.Almacen
     {
         public void Configure(EntityTypeBuilder<Repuesto> builder)
         {
-
             builder.ToTable("repuesto")  //mappeamos el nombre de la tabla
             .HasKey(c => c.idrepuestos);//campo en la bd es necesario el nombre tabla y su llave primaria
             //builder.Property(c => c.estado);

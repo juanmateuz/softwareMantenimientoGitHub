@@ -13,23 +13,21 @@ namespace Sistema.Web.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ArticulosController : ControllerBase
+    public class DistribuidorController : ControllerBase
     {
-        private readonly DbContextSistema _context;
-
-        public ArticulosController(DbContextSistema context)
+        private readonly DbContextSistema baseDatos;
+        public DistribuidorController(DbContextSistema context)
         {
-            _context = context;
+            baseDatos = context;
         }
-
         // GET: api/Distribuidor/Listar
         //modelo me refleja la entidad solo con los datos que el usuario requiera
         [Authorize(Roles = "Mecanico, Administrador, Ingeniero")]//autorizacion segin roles
         [HttpGet("[action]")]
         public async Task<IEnumerable<ArticuloViewModel>> Listar()//nombre metodo generamos una tarea asincrona y llamamos CategoriaViewModel
         {
-           // var distribuidor = await _context.Distribuidor.Include(a => a.categoria).ToListAsync();//objeto llamado distribuidor ToListAsync:obtenemos la lista del registro _context de la coleccion categorias
-            var distribuidor = await _context.Distribuidor.ToListAsync();
+           // var distribuidor = await baseDatos.Distribuidor.Include(a => a.categoria).ToListAsync();//objeto llamado distribuidor ToListAsync:obtenemos la lista del registro baseDatos de la coleccion categorias
+            var distribuidor = await baseDatos.Distribuidor.ToListAsync();
 
             //include porque esta relacionado con la tabla distribuidor
             return distribuidor.Select(a => new ArticuloViewModel //retorno el objeto siguiendo la estructura CategoriaViewModel
@@ -47,8 +45,8 @@ namespace Sistema.Web.Controllers
         [HttpGet("[action]/{id}")]
         public async Task<IActionResult> Mostrar([FromRoute] int id)//espera como parametro un id debemos enviarle la url
         {
-            var distribuidor = await _context.Distribuidor.FindAsync(id);//FindAsync(id):busca por id
-            //var distribuidor = await _context.Distribuidor.Include(a=> a.categoria).
+            var distribuidor = await baseDatos.Distribuidor.FindAsync(id);//FindAsync(id):busca por id
+            //var distribuidor = await baseDatos.Distribuidor.Include(a=> a.categoria).
             //    SingleOrDefaultAsync(a=>a.iddistribuidor==id);//FindAsync(id):busca por id 
             if (distribuidor == null)
             {
@@ -72,7 +70,7 @@ namespace Sistema.Web.Controllers
         [HttpGet("[action]")]
         public async Task<IEnumerable<ArticuloViewModel>> SelectProveedores()//nombre metodo generamos una tarea asincrona y llamamos SelectViewModel
         {
-            var fa = await _context.Distribuidor.ToListAsync();//objeto llamado Distribuidor ToListAsync:obtenemos la lista del registro _context de la coleccion categorias
+            var fa = await baseDatos.Distribuidor.ToListAsync();//objeto llamado Distribuidor ToListAsync:obtenemos la lista del registro baseDatos de la coleccion categorias
 
             return fa.Select(p => new ArticuloViewModel //retorno el objeto siguiendo la estructura SelectViewModel
             {
@@ -96,7 +94,7 @@ namespace Sistema.Web.Controllers
                 return BadRequest();
             }
 
-            var distribuidor = await _context.Distribuidor.FirstOrDefaultAsync(a => a.iddistribuidor == model.iddistribuidor);// _context.Distribuidor.FirstOrDefaultAsync: devuelve primer registro que encuentre
+            var distribuidor = await baseDatos.Distribuidor.FirstOrDefaultAsync(a => a.iddistribuidor == model.iddistribuidor);// baseDatos.Distribuidor.FirstOrDefaultAsync: devuelve primer registro que encuentre
 
             if (distribuidor == null)
             {//si no encuntra nada
@@ -109,7 +107,7 @@ namespace Sistema.Web.Controllers
 
             try //captura excepcions
             {
-                await _context.SaveChangesAsync();//guardamos los cambios
+                await baseDatos.SaveChangesAsync();//guardamos los cambios
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -138,11 +136,11 @@ namespace Sistema.Web.Controllers
                 telefono = model.telefono             
 
             };
-            _context.Distribuidor.Add(distribuidor);// me agregue esa Distribuidor
+            baseDatos.Distribuidor.Add(distribuidor);// me agregue esa Distribuidor
 
             try
             {
-                await _context.SaveChangesAsync();//guarda los cambios
+                await baseDatos.SaveChangesAsync();//guarda los cambios
             }
             catch (Exception ex)
             {
@@ -151,73 +149,10 @@ namespace Sistema.Web.Controllers
 
             return Ok();
         } 
-        ////Desactivar PUT: api/Distribuidor/Desactivar/1
-        //[Authorize(Roles = "Almacenero, Administrador")]//autorizacion segin roles
-        //[HttpPut("[action]/{id}")]
-        //public async Task<IActionResult> Desactivar([FromRoute] int id)
-        //{
-        //    if (id <= 0)
-        //    {
-        //        return BadRequest();
-        //    }
-
-        //    var distribuidor = await _context.Distribuidor.FirstOrDefaultAsync(a => a.iddistribuidor == id);// _context.Repuestos.FirstOrDefaultAsync: devuelve primer registro que encuentre
-
-        //    if (distribuidor == null)
-        //    {//si no encuntra nada
-        //        return NotFound();
-        //    }
-
-        //    distribuidor.condicion = false;
-
-        //    try
-        //    {
-        //        await _context.SaveChangesAsync();//guardamos los cambios
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        // guardar excepcion
-        //        return BadRequest();
-        //    }
-
-        //    return Ok();
-        //}
-
-        ////activar PUT: api/Distribuidor/Activar/1
-        //[Authorize(Roles = "Almacenero, Administrador")]//autorizacion segin roles
-        //[HttpPut("[action]/{id}")]
-        //public async Task<IActionResult> Activar([FromRoute] int id)
-        //{
-
-        //    if (id <= 0)
-        //    {
-        //        return BadRequest();
-        //    }
-
-        //    var distribuidor = await _context.Distribuidor.FirstOrDefaultAsync(a => a.iddistribuidor == id);// _context.Repuestos.FirstOrDefaultAsync: devuelve primer registro que encuentre
-
-        //    if (distribuidor == null)
-        //    {//si no encuntra nada
-        //        return NotFound();
-        //    }
-
-        //    distribuidor.condicion = true;
-
-        //    try
-        //    {
-        //        await _context.SaveChangesAsync();//guardamos los cambios
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        // guardar excepcion
-        //        return BadRequest();
-        //    }
-
-        //    return Ok();
-        //}
+       
         private bool ArticuloExists(int id)
         {
-            return _context.Distribuidor.Any(e => e.iddistribuidor == id);
+            return baseDatos.Distribuidor.Any(e => e.iddistribuidor == id);
         }
     }
 }

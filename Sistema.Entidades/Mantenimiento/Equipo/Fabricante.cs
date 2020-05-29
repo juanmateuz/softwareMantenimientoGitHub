@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Sistema.Entidades.Ventas
+namespace Sistema.Entidades.Almacen
 {
     public class Fabricante
     {

@@ -20,12 +20,12 @@ namespace Sistema.Web.Controllers
     [ApiController]
     public class UsuariosController : ControllerBase
     {
-        private readonly DbContextSistema _context;
+        private readonly DbContextSistema baseDatos;
         private readonly IConfiguration _config;//configuracion crear token
 
         public UsuariosController(DbContextSistema context, IConfiguration config)
         {
-            _context = context;
+            baseDatos = context;
             _config = config;//Configuracion token
         }
 
@@ -34,7 +34,7 @@ namespace Sistema.Web.Controllers
         [HttpGet("[action]")]
         public async Task<IEnumerable<UsuarioViewModel>> Listar()//nombre metodo generamos una tarea asincrona y llamamos CategoriaViewModel
         {
-            var usuario = await _context.Usuarios.Include(u => u.rol).ToListAsync();//objeto llamado categoria ToListAsync:obtenemos la lista del registro _context de la coleccion categorias
+            var usuario = await baseDatos.Usuarios.Include(u => u.rol).ToListAsync();//objeto llamado categoria ToListAsync:obtenemos la lista del registro baseDatos de la coleccion categorias
             //Include porque esta relacionado con la tabla categoria
             return usuario.Select(u => new UsuarioViewModel //retorno el objeto siguiendo la estructura CategoriaViewModel
             {
@@ -65,7 +65,7 @@ namespace Sistema.Web.Controllers
             //Validar email no repetido
             var email = model.email.ToLower(); //convierto a mayuscula
 
-            if (await _context.Usuarios.AnyAsync(u => u.email == email))//u.email obtengo el email del context
+            if (await baseDatos.Usuarios.AnyAsync(u => u.email == email))//u.email obtengo el email del context
             {
                 return BadRequest("El email ya existe");
             }
@@ -87,10 +87,10 @@ namespace Sistema.Web.Controllers
                 condicion=true
 
             };
-            _context.Usuarios.Add(usuario);// me agregue esa Usuario
+            baseDatos.Usuarios.Add(usuario);// me agregue esa Usuario
             try
             {
-                await _context.SaveChangesAsync();//guarda los cambios
+                await baseDatos.SaveChangesAsync();//guarda los cambios
             }
             catch (Exception ex)
             {
@@ -101,7 +101,7 @@ namespace Sistema.Web.Controllers
         }
 
          // PUT: api/Usuarios/Actualizar
-        [Authorize(Roles = "Administrador")]//autorizacion segin roles
+        [Authorize(Roles = "Administrador")]//autorizacion segun roles
         [HttpPut("[action]")]
         public async Task<IActionResult> Actualizar([FromBody] ActualizarViewModel model)
         {
@@ -115,7 +115,7 @@ namespace Sistema.Web.Controllers
                 return BadRequest();
             }
 
-            var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.idusuario == model.idusuario);
+            var usuario = await baseDatos.Usuarios.FirstOrDefaultAsync(u => u.idusuario == model.idusuario);
 
             if (usuario == null) //si usuario no existe
             {
@@ -139,7 +139,7 @@ namespace Sistema.Web.Controllers
 
             try
             {
-                await _context.SaveChangesAsync();
+                await baseDatos.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -150,6 +150,28 @@ namespace Sistema.Web.Controllers
             return Ok();
         }
 
+        // DELETE: api/Usuarios/Eliminar/1
+        [HttpDelete("[action]/{id}")]
+        public async Task<IActionResult> Eliminar([FromRoute] int id)
+        {
+          
+
+            var usuario = await baseDatos.Usuarios.FindAsync(id);
+            if (usuario == null)
+            {
+                return NotFound();
+            }
+            baseDatos.Usuarios.Remove(usuario);
+            try
+            {
+                await baseDatos.SaveChangesAsync();//guarda datos
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+            return Ok(usuario);
+        }
         //hachear password espera como primer parametro un string
         //y me retorna 2 valores de tipo array byte
         private void CrearPasswordHash(string password,out byte[] passwordHash,out byte[] passwordSalt)//
@@ -166,7 +188,7 @@ namespace Sistema.Web.Controllers
         [HttpGet("[action]")]
         public async Task<IEnumerable<SelectViewModel>> Select()//nombre metodo generamos una tarea asincrona y llamamos SelectViewModel
         {
-            var solicitud = await _context.Usuarios.Where(c => c.rol.nombre == "Administrador").ToListAsync();//objeto llamado model ToListAsync:obtenemos la lista del registro _context de la coleccion categorias
+            var solicitud = await baseDatos.Usuarios.Where(c => c.rol.nombre == "Administrador").ToListAsync();//objeto llamado model ToListAsync:obtenemos la lista del registro baseDatos de la coleccion categorias
 
             return solicitud.Select(c => new SelectViewModel //retorno el objeto siguiendo la estructura SelectViewModel
             {
@@ -179,7 +201,7 @@ namespace Sistema.Web.Controllers
         [HttpGet("[action]")]
         public async Task<IEnumerable<SelectViewModel>> SelectMecanico()//nombre metodo generamos una tarea asincrona y llamamos SelectViewModel
         {
-            var solicitud = await _context.Usuarios.Where(c => c.rol.nombre == "Mecanico").ToListAsync();//objeto llamado model ToListAsync:obtenemos la lista del registro _context de la coleccion categorias
+            var solicitud = await baseDatos.Usuarios.Where(c => c.rol.nombre == "Mecanico").ToListAsync();//objeto llamado model ToListAsync:obtenemos la lista del registro baseDatos de la coleccion categorias
 
             return solicitud.Select(c => new SelectViewModel //retorno el objeto siguiendo la estructura SelectViewModel
             {
@@ -197,7 +219,7 @@ namespace Sistema.Web.Controllers
                 return BadRequest();
             }
 
-            var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.idusuario == id);
+            var usuario = await baseDatos.Usuarios.FirstOrDefaultAsync(u => u.idusuario == id);
 
             if (usuario == null)
             {
@@ -208,7 +230,7 @@ namespace Sistema.Web.Controllers
 
             try
             {
-                await _context.SaveChangesAsync();
+                await baseDatos.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -220,7 +242,7 @@ namespace Sistema.Web.Controllers
         }
 
         // PUT: api/Usuarios/Activar/1
-        //  [Authorize(Roles = "Administrador")]//autorizacion segin roles
+        //  [Authorize(Roles = "Administrador")]//autorizacion segun roles
         [HttpPut("[action]/{id}")]
         public async Task<IActionResult> Activar([FromRoute] int id)
         {
@@ -230,7 +252,7 @@ namespace Sistema.Web.Controllers
                 return BadRequest();
             }
 
-            var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.idusuario == id);
+            var usuario = await baseDatos.Usuarios.FirstOrDefaultAsync(u => u.idusuario == id);
 
             if (usuario == null)
             {
@@ -241,7 +263,7 @@ namespace Sistema.Web.Controllers
 
             try
             {
-                await _context.SaveChangesAsync();
+                await baseDatos.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -258,7 +280,7 @@ namespace Sistema.Web.Controllers
         public async Task<IActionResult> Login(LoginViewModel model) //recibe objeto model que instancia de loginviewmodel
         {
             var email = model.email.ToLower();//convierto a  Mayuscula
-            var usuario = await _context.Usuarios.Where(u => u.condicion == true).Include(u => u.rol).FirstOrDefaultAsync(u => u.email == email);//verifica si existe el correo donde usuarios esten habilitados 
+            var usuario = await baseDatos.Usuarios.Where(u => u.condicion == true).Include(u => u.rol).FirstOrDefaultAsync(u => u.email == email);//verifica si existe el correo donde usuarios esten habilitados 
 
             if (usuario == null)
             {
@@ -297,7 +319,6 @@ namespace Sistema.Web.Controllers
 
         //metodo para generar token
         //para indicar al usuario los privilegios que va a tener
-
         private string GenerarToken(List<Claim> claims)//espera lista de claim
         {
             //llave y credenciales
@@ -316,7 +337,7 @@ namespace Sistema.Web.Controllers
 
         private bool UsuarioExists(int id)
         {
-            return _context.Usuarios.Any(e => e.idusuario == id);
+            return baseDatos.Usuarios.Any(e => e.idusuario == id);
         }
     }
 }

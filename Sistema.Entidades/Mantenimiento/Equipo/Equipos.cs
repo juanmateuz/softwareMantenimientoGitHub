@@ -4,6 +4,7 @@ namespace Sistema.Entidades.Almacen
 {
     public class Equipos
     {
+        
         public int idequipos { get; set; }
         public int idfabricante { get; set; }
         public string serie { get; set; }
@@ -14,7 +15,6 @@ namespace Sistema.Entidades.Almacen
         public DateTime year_adquisicion { get; set; }
         public string descripcion { get; set; }
         public bool estado { get; set; }
-
-     //   public Fabricante fabricante { get; set; }
+     // public Fabricante fabricante { get; set; }
     }
 }
