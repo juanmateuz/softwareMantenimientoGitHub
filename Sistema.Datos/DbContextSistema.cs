@@ -20,7 +20,10 @@ namespace Sistema.Datos
         {  // recibimos como parametro un objeto que instancia de la clase DbContextOptions
            //en este caso el paremetro q recibe es option de tipo DbContextSistema
            //: base(options) le indicamos parametro al padre DbContent           
-        }
+        }   
+
+
+
         // agregamos metodo permite mapear entidades con la BD
         //le estamos enviado como parametro modelBuilder que instancia a la clase ModelBuilder
         protected override void OnModelCreating(ModelBuilder modelBuilder)
